@@ -1,10 +1,11 @@
 'use client';
 
+import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { api } from '@/service/api';
-import Cookies from 'js-cookie';
+import { postLogin } from '@/service/api/accident';
+import { LoginResponse } from '@/service/api/types';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,12 +21,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await api.post('/v1/auth/login', {
-        email,
-        password,
-      });
-
-      const { access_token, refresh_token } = response.data;
+      const response: LoginResponse = await postLogin(email, password);
+      const { access_token, refresh_token } = response;
 
       Cookies.set('access_token', access_token, { expires: 7 });
       Cookies.set('refresh_token', refresh_token, { expires: 7 });

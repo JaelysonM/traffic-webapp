@@ -1,28 +1,33 @@
 'use client';
 
+import { useState } from 'react';
+
 import { ImageUpload } from '@/components/ImageUpload';
 import { PredictButton } from '@/components/PredictButton';
 import { ResultCard } from '@/components/ResultCard';
-import { useState } from 'react';
+
+import { postProcessAccidentImage } from '@/service/api/accident';
+import { AccidentProcessResult } from '@/service/api/types';
 
 export default function Home() {
   const [image, setImage] = useState<File | null>(null);
   const [status, setStatus] = useState<'idle' | 'loading' | 'done'>('idle');
-  const [result, setResult] = useState<string | null>(null);
+  const [result, setResult] = useState<AccidentProcessResult | null>(null);
 
-  function handlePredict() {
+  async function handlePredict() {
     if (!image) return;
 
     setStatus('loading');
+    setResult(null);
 
-    // MOCK de backend (simulação)
-    setTimeout(() => {
-      const outcomes = ['Baixa severidade', 'Média severidade', 'Alta severidade'];
-      const random = outcomes[Math.floor(Math.random() * outcomes.length)];
-
-      setResult(random);
+    try {
+      const data = await postProcessAccidentImage(image);
+      setResult(data);
       setStatus('done');
-    }, 2000);
+    } catch {
+      setResult({ message: 'Erro ao processar imagem' });
+      setStatus('done');
+    }
   }
 
   function handleReset() {
