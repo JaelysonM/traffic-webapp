@@ -1,22 +1,23 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-export function ImageUpload() {
+interface ImageUploadProps {
+  onImageSelect: (file: File) => void;
+}
+
+export function ImageUpload({ onImageSelect }: ImageUploadProps) {
   const [preview, setPreview] = useState<string | null>(null);
 
   useEffect(() => {
     return () => {
-      if (preview) {
-        URL.revokeObjectURL(preview);
-      }
+      if (preview) URL.revokeObjectURL(preview);
     };
   }, [preview]);
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Upload */}
+    <div className="flex flex-col gap-4">
       <label
         htmlFor="image"
         className="cursor-pointer rounded-md border border-gray-600 bg-gray-700 py-2 text-center text-sm text-gray-200
@@ -31,21 +32,21 @@ export function ImageUpload() {
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
-            if (file) {
-              const objectURL = URL.createObjectURL(file);
-              setPreview(objectURL);
-            }
+            if (!file) return;
+
+            const objectURL = URL.createObjectURL(file);
+            setPreview(objectURL);
+            onImageSelect(file);
           }}
         />
       </label>
 
-      {/* Preview */}
       {preview && (
         <div className="flex justify-center">
           <div className="rounded-lg overflow-hidden border border-gray-600 shadow-md">
             <Image
               src={preview}
-              alt="Pré-visualização da imagem enviada"
+              alt="Pré-visualização da imagem"
               width={300}
               height={300}
               className="object-cover"
