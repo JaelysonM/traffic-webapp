@@ -91,10 +91,6 @@ export default function HistoryPage() {
             ))
           )}
         </div>
-
-        <footer className="mt-16 text-center">
-          <p className="text-xs text-gray-400">Trabalho Final — PROBEST</p>
-        </footer>
       </div>
     </main>
   );
