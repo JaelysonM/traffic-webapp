@@ -43,6 +43,14 @@ export default function HistoryPage() {
   return (
     <main className="min-h-screen bg-white p-6">
       <div className="max-w-4xl mx-auto">
+        <div className="flex justify-start mb-6">
+          <button
+            onClick={() => (window.location.href = '/')}
+            className="py-2 px-4 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-900 hover:text-white text-sm font-medium transition-colors cursor-pointer"
+          >
+            Voltar para análise
+          </button>
+        </div>
         <header className="mb-10">
           <h1 className="text-3xl font-semibold text-gray-900 mb-2">Histórico</h1>
           <p className="text-gray-500">Análises realizadas anteriormente</p>

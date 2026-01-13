@@ -48,6 +48,13 @@ export default function Home() {
             onClick={handlePredict}
           />
 
+          <button
+            onClick={() => (window.location.href = '/historico')}
+            className="w-full py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 text-sm font-medium mb-2"
+          >
+            Ver histórico
+          </button>
+
           {status === 'done' && result && (
             <div className="space-y-4">
               <ResultCard result={result} />

@@ -3,6 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { api } from '@/service/api';
+import Cookies from 'js-cookie';
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -16,15 +19,34 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
 
-    // MOCK de autenticação
-    setTimeout(() => {
-      if (email === 'admin@email.com' && password === '123456') {
-        router.push('/');
+    try {
+      const response = await api.post('/v1/auth/login', {
+        email,
+        password,
+      });
+
+      const { access_token, refresh_token } = response.data;
+
+      Cookies.set('access_token', access_token, { expires: 7 });
+      Cookies.set('refresh_token', refresh_token, { expires: 7 });
+
+      router.push('/');
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosError = err as { response?: { status?: number } };
+        if (axiosError.response?.status === 422) {
+          setError('Dados inválidos. Verifique seu email e senha.');
+        } else if (axiosError.response?.status === 401) {
+          setError('Email ou senha incorretos.');
+        } else {
+          setError('Erro ao fazer login. Tente novamente.');
+        }
       } else {
-        setError('Email ou senha inválidos');
-        setLoading(false);
+        setError('Erro de conexão. Verifique sua internet.');
       }
-    }, 1200);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
