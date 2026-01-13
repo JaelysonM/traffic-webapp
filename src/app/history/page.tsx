@@ -1,96 +1,83 @@
-"use client";
-
-import Image from "next/image";
+'use client';
 
 const mockData = [
   {
     id: 1,
-    imageUrl: "/accident.jpeg",
-    result: "grave",
+    imageUrl: '/accident.jpeg',
+    result: 'Alta severidade',
     confidence: 0.92,
-    createdAt: "2025-01-10",
+    createdAt: '2025-01-10',
   },
   {
     id: 2,
-    imageUrl: "/accident.jpeg",
-    result: "moderado",
+    imageUrl: '/accident.jpeg',
+    result: 'Média severidade',
     confidence: 0.74,
-    createdAt: "2025-01-09",
+    createdAt: '2025-01-09',
   },
   {
     id: 3,
-    imageUrl: "/accident.jpeg",
-    result: "nao_acidente",
+    imageUrl: '/accident.jpeg',
+    result: 'Baixa severidade',
     confidence: 0.88,
-    createdAt: "2025-01-08",
+    createdAt: '2025-01-08',
   },
 ];
 
 function ResultBadge({ result }: { result: string }) {
-  const colors: Record<string, string> = {
-    grave: "bg-red-500/20 text-red-400",
-    moderado: "bg-yellow-500/20 text-yellow-400",
-    nao_acidente: "bg-green-500/20 text-green-400",
+  const getColor = (res: string) => {
+    if (res.includes('Alta')) return 'text-red-600 bg-red-50';
+    if (res.includes('Média')) return 'text-yellow-600 bg-yellow-50';
+    if (res.includes('Baixa')) return 'text-green-600 bg-green-50';
+    return 'text-gray-600 bg-gray-50';
   };
 
   return (
-    <span
-      className={`px-3 py-1 rounded-full text-xs font-medium ${colors[result]}`}
-    >
-      {result.replace("_", " ")}
+    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getColor(result)}`}>
+      {result}
     </span>
   );
 }
 
 export default function HistoryPage() {
   return (
-    <main className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
-      <div className="w-full max-w-4xl bg-gray-800 rounded-xl p-6 shadow-xl">
-        <h1 className="text-xl font-semibold text-gray-100 mb-6">
-          Histórico de Análises
-        </h1>
+    <main className="min-h-screen bg-white p-6">
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-10">
+          <h1 className="text-3xl font-semibold text-gray-900 mb-2">Histórico</h1>
+          <p className="text-gray-500">Análises realizadas anteriormente</p>
+        </header>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-gray-400 border-b border-gray-700">
-              <tr>
-                <th className="py-3">Imagem</th>
-                <th>Resultado</th>
-                <th>Confiança</th>
-                <th>Data</th>
-              </tr>
-            </thead>
+        <div className="space-y-4">
+          {mockData.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center gap-6 p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={item.imageUrl}
+                alt="Imagem analisada"
+                className="w-20 h-20 object-cover rounded-lg"
+              />
 
-            <tbody>
-              {mockData.map((item) => (
-                <tr
-                  key={item.id}
-                  className="border-b border-gray-700 last:border-none"
-                >
-                  <td className="py-3">
-                    <Image
-                      src={item.imageUrl}
-                      alt="Acidente"
-                      width={200}
-                      height={200}
-                      className="rounded-md"
-                    />
-                  </td>
+              <div className="flex-1">
+                <ResultBadge result={item.result} />
+                <p className="text-sm text-gray-500 mt-2">
+                  Confiança: {(item.confidence * 100).toFixed(0)}%
+                </p>
+              </div>
 
-                  <td>
-                    <ResultBadge result={item.result} />
-                  </td>
-
-                  <td className="text-gray-300">
-                    {(item.confidence * 100).toFixed(1)}%
-                  </td>
-
-                  <td className="text-gray-400">{item.createdAt}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              <div className="text-right">
+                <p className="text-sm text-gray-400">{item.createdAt}</p>
+              </div>
+            </div>
+          ))}
         </div>
+
+        <footer className="mt-16 text-center">
+          <p className="text-xs text-gray-400">Trabalho Final — PROBEST</p>
+        </footer>
       </div>
     </main>
   );

@@ -1,50 +1,69 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { ImageUpload } from "../components/ImageUpload";
-import { PredictButton } from "../components/PredictButton";
-import { ResultCard } from "../components/ResultCard";
+import { ImageUpload } from '@/components/ImageUpload';
+import { PredictButton } from '@/components/PredictButton';
+import { ResultCard } from '@/components/ResultCard';
+import { useState } from 'react';
 
 export default function Home() {
   const [image, setImage] = useState<File | null>(null);
-  const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
+  const [status, setStatus] = useState<'idle' | 'loading' | 'done'>('idle');
   const [result, setResult] = useState<string | null>(null);
 
   function handlePredict() {
     if (!image) return;
 
-    setStatus("loading");
+    setStatus('loading');
 
     // MOCK de backend (simulação)
     setTimeout(() => {
-      const outcomes = ["Baixa severidade", "Média severidade", "Alta severidade"];
+      const outcomes = ['Baixa severidade', 'Média severidade', 'Alta severidade'];
       const random = outcomes[Math.floor(Math.random() * outcomes.length)];
 
       setResult(random);
-      setStatus("done");
+      setStatus('done');
     }, 2000);
   }
 
+  function handleReset() {
+    setImage(null);
+    setStatus('idle');
+    setResult(null);
+  }
+
   return (
-    <main className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm bg-gray-800 rounded-xl shadow-xl p-6 flex flex-col gap-5">
-        <h1 className="text-center text-2xl font-semibold text-gray-100">
-          Classificador de Acidentes
-        </h1>
+    <main className="min-h-screen bg-white flex items-center justify-center p-6">
+      <div className="w-full max-w-md">
+        <header className="text-center mb-10">
+          <h1 className="text-3xl font-semibold text-gray-900 mb-2">Classificador de Acidentes</h1>
+          <p className="text-gray-500">Envie uma imagem para analisar a severidade</p>
+        </header>
 
-        <p className="text-center text-sm text-gray-400">
-          Envie uma imagem para prever a severidade do acidente.
-        </p>
+        <div className="space-y-6">
+          <ImageUpload onImageSelect={setImage} />
 
-        <ImageUpload onImageSelect={setImage} />
+          <PredictButton
+            disabled={!image || status === 'loading'}
+            loading={status === 'loading'}
+            onClick={handlePredict}
+          />
 
-        <PredictButton
-          disabled={!image || status === "loading"}
-          loading={status === "loading"}
-          onClick={handlePredict}
-        />
+          {status === 'done' && result && (
+            <div className="space-y-4">
+              <ResultCard result={result} />
+              <button
+                onClick={handleReset}
+                className="w-full text-sm text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                Analisar outra imagem
+              </button>
+            </div>
+          )}
+        </div>
 
-        {status === "done" && result && <ResultCard result={result} />}
+        <footer className="mt-16 text-center">
+          <p className="text-xs text-gray-400">Trabalho Final — PROBEST</p>
+        </footer>
       </div>
     </main>
   );
