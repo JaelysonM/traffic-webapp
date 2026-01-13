@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ImageUpload } from "../src/components/ImageUpload";
-import { PredictButton } from "../src/components/PredictButton";
-import { ResultCard } from "../src/components/ResultCard";
+import { ImageUpload } from "../components/ImageUpload";
+import { PredictButton } from "../components/PredictButton";
+import { ResultCard } from "../components/ResultCard";
 
 export default function Home() {
   const [image, setImage] = useState<File | null>(null);
