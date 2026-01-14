@@ -60,16 +60,24 @@ export default function HistoryPage() {
   const [data, setData] = useState<AccidentHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+
   useEffect(() => {
-    getAccidentHistory()
+    setLoading(true);
+
+    getAccidentHistory({ page })
       .then((res) => {
         setData(res.data);
+        setTotalPages(res.options.pages);
       })
       .catch(() => {
         setData([]);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [page]);
+
 
   function handleLogout() {
     Cookies.remove('access_token');
@@ -246,14 +254,28 @@ export default function HistoryPage() {
           {!loading && data.length > 0 && (
             <div className="mt-6 flex items-center justify-between text-sm text-gray-500 px-2">
               <p>
-                A mostrar <span className="font-semibold text-gray-900">{data.length}</span>{' '}
-                resultados
+                Página <span className="font-semibold text-gray-900">{page}</span> de{' '}
+                <span className="font-semibold text-gray-900">{totalPages}</span>
               </p>
+
               <div className="flex gap-2">
-                <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg opacity-50 cursor-not-allowed">
+                <button
+                  onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                  disabled={page === 1}
+                  className={`px-3 py-1.5 bg-white border border-gray-200 rounded-lg transition-colors ${
+                    page === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-900'
+                  }`}
+                >
                   Anterior
                 </button>
-                <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg hover:border-gray-900 transition-colors">
+
+                <button
+                  onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                  disabled={page === totalPages}
+                  className={`px-3 py-1.5 bg-white border border-gray-200 rounded-lg transition-colors ${
+                    page === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-900'
+                  }`}
+                >
                   Próximo
                 </button>
               </div>
